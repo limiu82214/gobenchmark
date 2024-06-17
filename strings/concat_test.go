@@ -1,4 +1,4 @@
-package string
+package strings
 
 /**
  * 使用 + 號進行字串連接的效能比使用 fmt.Sprintf 要好得多。
