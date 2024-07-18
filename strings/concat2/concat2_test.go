@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"math/rand"
+	"strconv"
 	"strings"
 	"testing"
 )
@@ -23,6 +24,12 @@ func benchmark(b *testing.B, f func(int, string) string) {
 		f(10000, str)
 	}
 }
+func benchmarkNum(b *testing.B, f func(int, int) string) {
+	var n = rand.Intn(1000000)
+	for i := 0; i < b.N; i++ {
+		f(10000, n)
+	}
+}
 
 func BenchmarkPlusConcat(b *testing.B)    { benchmark(b, plusConcat) }
 func BenchmarkSprintfConcat(b *testing.B) { benchmark(b, sprintfConcat) }
@@ -30,6 +37,11 @@ func BenchmarkBuilderConcat(b *testing.B) { benchmark(b, builderConcat) }
 func BenchmarkBufferConcat(b *testing.B)  { benchmark(b, bufferConcat) }
 func BenchmarkByteConcat(b *testing.B)    { benchmark(b, byteConcat) }
 func BenchmarkPreByteConcat(b *testing.B) { benchmark(b, preByteConcat) }
+
+func BenchmarkNothing(b *testing.B)         { return }
+func BenchmarkFormatIntNumber(b *testing.B) { benchmarkNum(b, formatIntNumber) }
+func BenchmarkItoaNumber(b *testing.B)      { benchmarkNum(b, itoaNumber) }
+func BenchmarkSprintfNumber(b *testing.B)   { benchmarkNum(b, sprintfNumber) }
 
 func randomString(n int) string {
 	b := make([]byte, n)
@@ -51,6 +63,31 @@ func sprintfConcat(n int, str string) string {
 	s := ""
 	for i := 0; i < n; i++ {
 		s = fmt.Sprintf("%s%s", s, str)
+	}
+	return s
+}
+
+func formatIntNumber(n int, d int) string {
+	s := ""
+	for i := 0; i < n; i++ {
+		s = strconv.FormatInt(int64(d), 10)
+	}
+	return s
+
+}
+
+func itoaNumber(n int, d int) string {
+	s := ""
+	for i := 0; i < n; i++ {
+		s = strconv.Itoa(d)
+	}
+	return s
+}
+
+func sprintfNumber(n int, d int) string {
+	s := ""
+	for i := 0; i < n; i++ {
+		s = fmt.Sprintf("%d", d)
 	}
 	return s
 }
