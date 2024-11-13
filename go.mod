@@ -5,10 +5,12 @@ go 1.22.5
 require (
 	github.com/go-redis/redis/v8 v8.11.5
 	github.com/go-sql-driver/mysql v1.8.1
+	github.com/goccy/go-json v0.10.3
 	github.com/gorilla/websocket v1.5.0
 	github.com/json-iterator/go v1.1.12
 	github.com/mitchellh/mapstructure v1.5.0
 	golang.org/x/time v0.5.0
+	google.golang.org/protobuf v1.34.2
 )
 
 require (

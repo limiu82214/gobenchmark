@@ -19,6 +19,7 @@ import (
 	"fmt"
 	"testing"
 
+	gojson "github.com/goccy/go-json"
 	jsoniterator "github.com/json-iterator/go"
 	"github.com/mitchellh/mapstructure"
 )
@@ -135,6 +136,23 @@ func BenchmarkDeEncode(b *testing.B) { //nolint:funlen,gocognit //for different 
 					ans := testStruct{}
 
 					err = json.Unmarshal(b, &ans)
+					if err != nil {
+						panic(err)
+					}
+				}
+			}
+		})
+		b.Run(fmt.Sprintf("go-json-%d", count), func(b *testing.B) {
+			for j := 0; j < count; j++ {
+				for i := 0; i < b.N; i++ {
+					b, err := gojson.Marshal(t)
+					if err != nil {
+						panic(err)
+					}
+
+					ans := testStruct{}
+
+					err = gojson.Unmarshal(b, &ans)
 					if err != nil {
 						panic(err)
 					}

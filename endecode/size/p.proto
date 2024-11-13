@@ -1,0 +1,30 @@
+// protoc --go_out=. --go_opt=Mp.proto=myproto/ p.proto
+// 用這個產生go檔
+syntax = "proto3";
+
+package size;
+
+message TestStruct {
+  string a1 = 1;
+  string a2 = 2;
+  string a3 = 3;
+  string a4 = 4;
+  string a5 = 5;
+
+  bool b1 = 6;
+  bool b2 = 7;
+  bool b3 = 8;
+  bool b4 = 9;
+  bool b5 = 10;
+
+  int32 c1 = 11;
+  int32 c2 = 12;
+  int32 c4 = 13;
+  int32 c5 = 14;
+
+  float d1 = 15;
+  float d2 = 16;
+  float d3 = 17;
+  float d4 = 18;
+  float d5 = 19;
+}
