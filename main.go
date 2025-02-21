@@ -12,10 +12,20 @@ type Inner struct {
 	Field string `json:"field"`
 }
 
+// swagger:route GET /users users listUsers
+//
+// Returns a list of users.
+//
+// Responses:
+//   200: usersResponse
+
+// Users response example
+// swagger:response usersResponse
 type Outer struct {
 	*Inner
 }
 
+// @description This is a sample server celler server.
 func main() {
 	// Creating a JSON string that will cause internal issues
 	jsonData := `{"Inner": null}`

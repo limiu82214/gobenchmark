@@ -1,44 +1,66 @@
-package memory
+package main
 
 import (
 	"runtime"
 	"testing"
 )
 
-func TestPrefixMemGC(t *testing.T) {
-	var memStatsBefore, memStatsAfter, memStatsAfterGC runtime.MemStats
+const l = 1e9
 
-	runtime.ReadMemStats(&memStatsBefore)
-	arr := make([]int, 100000000000)
-	//t.Log("ptr:", &arr[0])
-	arr = arr[99999999999:]
-	//t.Log("ptr:", &arr[0])
-	runtime.ReadMemStats(&memStatsAfter)
-	runtime.GC()
-	runtime.ReadMemStats(&memStatsAfterGC)
+func BenchmarkPrefixMemGC(b *testing.B) {
+	var totalBefore, totalAfter, totalAfterGC uint64
 
-	//t.Log("ptr:", &arr[0]) // 注解開這行，他就不會被回收
-	t.Log("cap:", cap(arr), "len:", len(arr))
-	t.Logf("Before: %d bytes", memStatsBefore.HeapAlloc)
-	t.Logf("After: %d bytes", memStatsAfter.HeapAlloc)
-	t.Logf("After-GC: %d bytes", memStatsAfterGC.HeapAlloc)
+	for i := 0; i < b.N; i++ {
+		var memStatsBefore, memStatsAfter, memStatsAfterGC runtime.MemStats
+
+		runtime.ReadMemStats(&memStatsBefore)
+		arr := make([]int, l)
+		arr = arr[l-1:] // 去除前面的元素
+		runtime.ReadMemStats(&memStatsAfter)
+		runtime.GC() // 手動觸發 GC
+		runtime.ReadMemStats(&memStatsAfterGC)
+
+		totalBefore += memStatsBefore.HeapAlloc
+		totalAfter += memStatsAfter.HeapAlloc
+		totalAfterGC += memStatsAfterGC.HeapAlloc
+	}
+
+	avgBefore := totalBefore / uint64(b.N)
+	avgAfter := totalAfter / uint64(b.N)
+	avgAfterGC := totalAfterGC / uint64(b.N)
+
+	b.Log("Benchmark Prefix Mem GC")
+	b.Logf("Average cap: %d, len: %d", cap(make([]int, l)[l-1:]), len(make([]int, l)[l-1:]))
+	b.Logf("Average Before: %d bytes", avgBefore)
+	b.Logf("Average After: %d bytes", avgAfter)
+	b.Logf("Average After-GC: %d bytes", avgAfterGC)
 }
 
-func TestSuffixMemGC(t *testing.T) {
-	var memStatsBefore, memStatsAfter, memStatsAfterGC runtime.MemStats
+func BenchmarkSuffixMemGC(b *testing.B) {
+	var totalBefore, totalAfter, totalAfterGC uint64
 
-	runtime.ReadMemStats(&memStatsBefore)
-	arr := make([]int, 100000000000)
-	//t.Log("ptr:", &arr[0])
-	arr = arr[:1]
-	//t.Log("ptr:", &arr[0])
-	runtime.ReadMemStats(&memStatsAfter)
-	runtime.GC()
-	runtime.ReadMemStats(&memStatsAfterGC)
+	for i := 0; i < b.N; i++ {
+		var memStatsBefore, memStatsAfter, memStatsAfterGC runtime.MemStats
 
-	//t.Log("ptr:", &arr[0]) // 注解開這行，他就不會被回收
-	t.Log("cap:", cap(arr), "len:", len(arr))
-	t.Logf("Before: %d bytes", memStatsBefore.HeapAlloc)
-	t.Logf("After: %d bytes", memStatsAfter.HeapAlloc)
-	t.Logf("After-GC: %d bytes", memStatsAfterGC.HeapAlloc)
+		runtime.ReadMemStats(&memStatsBefore)
+		arr := make([]int, l)
+		arr = arr[:1] // 去除後面的元素
+		runtime.ReadMemStats(&memStatsAfter)
+		runtime.GC() // 手動觸發 GC
+		runtime.ReadMemStats(&memStatsAfterGC)
+
+		totalBefore += memStatsBefore.HeapAlloc
+		totalAfter += memStatsAfter.HeapAlloc
+		totalAfterGC += memStatsAfterGC.HeapAlloc
+	}
+
+	avgBefore := totalBefore / uint64(b.N)
+	avgAfter := totalAfter / uint64(b.N)
+	avgAfterGC := totalAfterGC / uint64(b.N)
+
+	b.Log("Benchmark Suffix Mem GC")
+	b.Logf("Average cap: %d, len: %d", cap(make([]int, l)[:1]), len(make([]int, l)[:1]))
+	b.Logf("Average Before: %d bytes", avgBefore)
+	b.Logf("Average After: %d bytes", avgAfter)
+	b.Logf("Average After-GC: %d bytes", avgAfterGC)
 }

@@ -1,0 +1,17 @@
+paths:
+    /users:
+        get:
+            operationId: listUsers
+            responses:
+                "200":
+                    $ref: '#/responses/usersResponse'
+            summary: Returns a list of users.
+            tags:
+                - users
+responses:
+    usersResponse:
+        description: Users response example
+        headers:
+            field:
+                type: string
+swagger: "2.0"
